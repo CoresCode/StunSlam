@@ -14,10 +14,11 @@ public class StunSlamClient implements ClientModInitializer {
 	private static final int STUN_SLAM_WINDOW = 5;
 
 	private Entity shieldStunnedTarget;
+
 	private int stunTicksRemaining = 0;
 
-	// Our own client tick counter
 	private long clientTicks = 0;
+
 	private long shieldStunTime = 0;
 
 	@Override
@@ -31,10 +32,6 @@ public class StunSlamClient implements ClientModInitializer {
 				return ActionResult.PASS;
 			}
 
-			// ---------------------------------------------------------
-			// AXE → SHIELD STUN
-			// ---------------------------------------------------------
-
 			if (player.getMainHandStack().isIn(ItemTags.AXES)
 					&& entity instanceof LivingEntity target
 					&& target.isBlocking()) {
@@ -43,12 +40,13 @@ public class StunSlamClient implements ClientModInitializer {
 				stunTicksRemaining = STUN_SLAM_WINDOW;
 				shieldStunTime = clientTicks;
 
+				System.out.println(
+						"[Stun Slam] SHIELD STUN DETECTED! Target: "
+								+ target.getName().getString()
+				);
+
 				return ActionResult.PASS;
 			}
-
-			// ---------------------------------------------------------
-			// MACE → TARGET
-			// ---------------------------------------------------------
 
 			if (player.getMainHandStack().isOf(Items.MACE)
 					&& entity == shieldStunnedTarget
@@ -56,7 +54,8 @@ public class StunSlamClient implements ClientModInitializer {
 					&& player.getVelocity().y < 0
 					&& player.fallDistance > 0.5f) {
 
-				long elapsedTicks = clientTicks - shieldStunTime;
+				long elapsedTicks =
+						clientTicks - shieldStunTime;
 
 				System.out.println(
 						"[Stun Slam] STUN SLAM DETECTED! Target: "
@@ -77,15 +76,13 @@ public class StunSlamClient implements ClientModInitializer {
 			return ActionResult.PASS;
 		});
 
-		// -------------------------------------------------------------
-		// CLIENT TICK
-		// -------------------------------------------------------------
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
 			clientTicks++;
 
 			if (stunTicksRemaining > 0) {
+
 				stunTicksRemaining--;
 
 				if (stunTicksRemaining <= 0) {
