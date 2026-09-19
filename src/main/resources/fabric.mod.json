@@ -9,7 +9,7 @@
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/CoresCode/StunSlam"
 	},
 	"license": "MIT",
 	"icon": "assets/stunslam/icon.png",
@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"com.corescode.stunslam.client.StunSlamClient"
+		],
+		"modmenu": [
+			"com.corescode.stunslam.client.StunSlamModMenu"
 		]
 	},
 	"mixins": [

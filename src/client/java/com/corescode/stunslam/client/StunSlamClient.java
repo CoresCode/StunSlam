@@ -24,6 +24,10 @@ public class StunSlamClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 
+		// Load Stun Slam configuration
+		StunSlamConfig.load();
+
+		// Initialize HUD
 		StunSlamHud.initialize();
 
 		AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
@@ -75,7 +79,6 @@ public class StunSlamClient implements ClientModInitializer {
 
 			return ActionResult.PASS;
 		});
-
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 

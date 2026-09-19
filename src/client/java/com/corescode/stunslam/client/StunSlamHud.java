@@ -11,22 +11,23 @@ public class StunSlamHud {
     private static final Identifier HUD_ID =
             Identifier.of("stunslam", "stun_slam");
 
-    // 2 frames × 60 ms = 120 ms
-    private static final long FRAME_DURATION = 60;
     private static final int FRAME_COUNT = 2;
 
+    // Original texture dimensions
     private static final int TEXTURE_WIDTH = 128;
     private static final int TEXTURE_HEIGHT = 24;
-
-    // Final display size
-    private static final int DRAW_WIDTH = 128;
-    private static final int DRAW_HEIGHT = 24;
 
     private static long animationStart = -1;
 
     private static final Identifier[] FRAMES = {
-            Identifier.of("stunslam", "textures/hud/stunslam/frame_1.png"),
-            Identifier.of("stunslam", "textures/hud/stunslam/frame_2.png")
+            Identifier.of(
+                    "stunslam",
+                    "textures/hud/stunslam/frame_1.png"
+            ),
+            Identifier.of(
+                    "stunslam",
+                    "textures/hud/stunslam/frame_2.png"
+            )
     };
 
     public static void initialize() {
@@ -38,7 +39,9 @@ public class StunSlamHud {
     }
 
     public static void trigger() {
-        animationStart = Util.getMeasuringTimeMs();
+
+        animationStart =
+                Util.getMeasuringTimeMs();
     }
 
     private static void render(DrawContext context) {
@@ -47,22 +50,39 @@ public class StunSlamHud {
             return;
         }
 
-        long elapsed =
-                Util.getMeasuringTimeMs() - animationStart;
+        // Get duration from config
+        int frameDuration =
+                StunSlamConfig.getInstance()
+                        .getAnimationDurationMs();
 
-        if (elapsed >= FRAME_DURATION * FRAME_COUNT) {
+        long elapsed =
+                Util.getMeasuringTimeMs()
+                        - animationStart;
+
+        // Two frames total
+        if (elapsed >= (long) frameDuration * FRAME_COUNT) {
             animationStart = -1;
             return;
         }
 
         int frameIndex =
-                (int) (elapsed / FRAME_DURATION);
+                (int) (elapsed / frameDuration);
 
         if (frameIndex >= FRAME_COUNT) {
             frameIndex = FRAME_COUNT - 1;
         }
 
-        Identifier texture = FRAMES[frameIndex];
+        Identifier texture =
+                FRAMES[frameIndex];
+
+        // Get configured size
+        int drawWidth =
+                StunSlamConfig.getInstance()
+                        .getAnimationWidth();
+
+        int drawHeight =
+                StunSlamConfig.getInstance()
+                        .getAnimationHeight();
 
         int screenWidth =
                 context.getScaledWindowWidth();
@@ -70,11 +90,38 @@ public class StunSlamHud {
         int screenHeight =
                 context.getScaledWindowHeight();
 
+        // Get configured position
+        int positionX =
+                StunSlamConfig.getInstance()
+                        .getPositionX();
+
+        int positionY =
+                StunSlamConfig.getInstance()
+                        .getPositionY();
+
+        /*
+         * Convert percentage position into actual screen coordinates.
+         *
+         * The animation is constrained so the entire texture remains
+         * inside the screen.
+         */
+        int availableWidth =
+                screenWidth - drawWidth;
+
+        int availableHeight =
+                screenHeight - drawHeight;
+
         int x =
-                (screenWidth - DRAW_WIDTH) / 2;
+                Math.round(
+                        availableWidth
+                                * (positionX / 100.0f)
+                );
 
         int y =
-                screenHeight / 2 + 14;
+                Math.round(
+                        availableHeight
+                                * (positionY / 100.0f)
+                );
 
         context.drawTexture(
                 RenderPipelines.GUI_TEXTURED,
@@ -83,8 +130,8 @@ public class StunSlamHud {
                 y,
                 0.0f,
                 0.0f,
-                DRAW_WIDTH,
-                DRAW_HEIGHT,
+                drawWidth,
+                drawHeight,
                 TEXTURE_WIDTH,
                 TEXTURE_HEIGHT
         );
