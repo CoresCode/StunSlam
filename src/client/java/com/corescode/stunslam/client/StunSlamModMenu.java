@@ -2,10 +2,10 @@ package com.corescode.stunslam.client;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.network.chat.Component;
 
 public class StunSlamModMenu implements ModMenuApi {
 
@@ -24,7 +24,7 @@ public class StunSlamModMenu implements ModMenuApi {
         private PositionYSlider positionYSlider;
 
         protected StunSlamConfigScreen(Screen parent) {
-            super(Text.literal("Stun Slam Settings"));
+            super(Component.literal("Stun Slam Settings"));
             this.parent = parent;
         }
 
@@ -49,7 +49,7 @@ public class StunSlamModMenu implements ModMenuApi {
                             config.getAnimationDurationMs()
                     );
 
-            this.addDrawableChild(durationSlider);
+            this.addRenderableWidget(durationSlider);
 
             // =========================
             // Animation Size
@@ -64,7 +64,7 @@ public class StunSlamModMenu implements ModMenuApi {
                             config.getAnimationWidth()
                     );
 
-            this.addDrawableChild(sizeSlider);
+            this.addRenderableWidget(sizeSlider);
 
             // =========================
             // Position X
@@ -79,7 +79,7 @@ public class StunSlamModMenu implements ModMenuApi {
                             config.getPositionX()
                     );
 
-            this.addDrawableChild(positionXSlider);
+            this.addRenderableWidget(positionXSlider);
 
             // =========================
             // Position Y
@@ -94,15 +94,15 @@ public class StunSlamModMenu implements ModMenuApi {
                             config.getPositionY()
                     );
 
-            this.addDrawableChild(positionYSlider);
+            this.addRenderableWidget(positionYSlider);
 
             // =========================
             // Done Button
             // =========================
 
-            this.addDrawableChild(
-                    ButtonWidget.builder(
-                            Text.literal("Done"),
+            this.addRenderableWidget(
+                    Button.builder(
+                            Component.literal("Done"),
                             button -> {
 
                                 config.setAnimationDurationMs(
@@ -123,11 +123,11 @@ public class StunSlamModMenu implements ModMenuApi {
 
                                 StunSlamConfig.save();
 
-                                if (this.client != null) {
-                                    this.client.setScreen(parent);
+                                if (this.minecraft != null) {
+                                    ScreenCompat.setScreen(this.minecraft, parent);
                                 }
                             }
-                    ).dimensions(
+                    ).bounds(
                             centerX - 100,
                             this.height / 2 + 105,
                             200,
@@ -137,10 +137,10 @@ public class StunSlamModMenu implements ModMenuApi {
         }
 
         @Override
-        public void close() {
+        public void onClose() {
 
-            if (this.client != null) {
-                this.client.setScreen(parent);
+            if (this.minecraft != null) {
+                ScreenCompat.setScreen(this.minecraft, parent);
             }
         }
 
@@ -149,7 +149,7 @@ public class StunSlamModMenu implements ModMenuApi {
         // ============================================================
 
         private static class DurationSlider
-                extends SliderWidget {
+                extends AbstractSliderButton {
 
             private static final int MIN = 40;
             private static final int MAX = 300;
@@ -167,7 +167,7 @@ public class StunSlamModMenu implements ModMenuApi {
                         y,
                         width,
                         height,
-                        Text.empty(),
+                        Component.empty(),
                         valueToSlider(currentValue)
                 );
 
@@ -209,7 +209,7 @@ public class StunSlamModMenu implements ModMenuApi {
             protected void updateMessage() {
 
                 this.setMessage(
-                        Text.literal(
+                        Component.literal(
                                 "Animation Duration: "
                                         + getDuration()
                                         + " ms"
@@ -228,7 +228,7 @@ public class StunSlamModMenu implements ModMenuApi {
         // ============================================================
 
         private static class SizeSlider
-                extends SliderWidget {
+                extends AbstractSliderButton {
 
             private static final int MIN = 64;
             private static final int MAX = 256;
@@ -246,7 +246,7 @@ public class StunSlamModMenu implements ModMenuApi {
                         y,
                         width,
                         height,
-                        Text.empty(),
+                        Component.empty(),
                         valueToSlider(currentValue)
                 );
 
@@ -288,7 +288,7 @@ public class StunSlamModMenu implements ModMenuApi {
             protected void updateMessage() {
 
                 this.setMessage(
-                        Text.literal(
+                        Component.literal(
                                 "Animation Size: "
                                         + getWidthValue()
                                         + " px"
@@ -307,7 +307,7 @@ public class StunSlamModMenu implements ModMenuApi {
         // ============================================================
 
         private static class PositionXSlider
-                extends SliderWidget {
+                extends AbstractSliderButton {
 
             private static final int MIN = 0;
             private static final int MAX = 100;
@@ -325,7 +325,7 @@ public class StunSlamModMenu implements ModMenuApi {
                         y,
                         width,
                         height,
-                        Text.empty(),
+                        Component.empty(),
                         valueToSlider(currentValue)
                 );
 
@@ -358,7 +358,7 @@ public class StunSlamModMenu implements ModMenuApi {
             protected void updateMessage() {
 
                 this.setMessage(
-                        Text.literal(
+                        Component.literal(
                                 "Position X: "
                                         + getPosition()
                                         + "%"
@@ -377,7 +377,7 @@ public class StunSlamModMenu implements ModMenuApi {
         // ============================================================
 
         private static class PositionYSlider
-                extends SliderWidget {
+                extends AbstractSliderButton {
 
             private static final int MIN = 0;
             private static final int MAX = 100;
@@ -395,7 +395,7 @@ public class StunSlamModMenu implements ModMenuApi {
                         y,
                         width,
                         height,
-                        Text.empty(),
+                        Component.empty(),
                         valueToSlider(currentValue)
                 );
 
@@ -428,7 +428,7 @@ public class StunSlamModMenu implements ModMenuApi {
             protected void updateMessage() {
 
                 this.setMessage(
-                        Text.literal(
+                        Component.literal(
                                 "Position Y: "
                                         + getPosition()
                                         + "%"

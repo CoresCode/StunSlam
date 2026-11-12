@@ -9,5 +9,11 @@ pluginManagement {
 	}
 }
 
-// Should match your modid
 rootProject.name = 'stunslam'
+
+// One subproject per supported Minecraft version.
+// Shared code lives in /src, version-specific code in /versions/<mc>/src.
+['1.21.11', '26.1', '26.2', '26.3'].each { mc ->
+	include ":$mc"
+	project(":$mc").projectDir = file("versions/$mc")
+}

@@ -3,20 +3,38 @@
 A mod that Detects if you performed stun slam and shows a small animation
 
 
-## Supported Version
+## Supported Versions
 
-- Minecraft: **1.21.11**
-- Fabric Loader: **0.19.2**
-- Fabric API: **0.141.6+1.21.11**
-- Java: **21+**
+| Minecraft | Jar | Java |
+|---|---|---|
+| 1.21.11 | `stunslam-<version>+mc1.21.11.jar` | 21+ |
+| 26.1, 26.1.1, 26.1.2 | `stunslam-<version>+mc26.1.jar` | 25+ |
+| 26.2 | `stunslam-<version>+mc26.2.jar` | 25+ |
+| 26.3 | `stunslam-<version>+mc26.3.jar` | 25+ |
+
+Requires Fabric Loader and Fabric API. Mod Menu is optional and adds an in-game settings screen; without it, settings are read from `config/stunslam.json`.
 
 ## Installation
 
-1. Install Fabric for Minecraft 1.21.11.
+1. Install Fabric for your Minecraft version.
 2. Install Fabric API.
-3. Download the Stun Slam `.jar` file.
+3. Download the Stun Slam `.jar` that matches your Minecraft version.
 4. Place it in your Minecraft `mods` folder.
 5. Launch Minecraft using the Fabric profile.
+
+## Building
+
+All Minecraft versions are built from this one project (JDK 25 required):
+
+```
+./gradlew build
+```
+
+The jars end up in `build/libs/`. To build a single version use `./gradlew :26.3:build`, and to start a test client `./gradlew :26.3:runClient`.
+
+- `src/` - code shared by every Minecraft version
+- `versions/<mc>/src/` - the few classes that differ per Minecraft version
+- `versions/<mc>/gradle.properties` - Minecraft and dependency versions for that build
 
 ## How It Works
 

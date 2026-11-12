@@ -2,22 +2,20 @@
 	"schemaVersion": 1,
 	"id": "stunslam",
 	"version": "${version}",
-	"name": "stunslam",
+	"name": "Stun Slam",
 	"description": "A simple mod that detects stun slams performed and shows short animation on success!",
 	"authors": [
 		"CoresCode"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/CoresCode/StunSlam"
+		"homepage": "https://github.com/CoresCode/StunSlam",
+		"sources": "https://github.com/CoresCode/StunSlam",
+		"issues": "https://github.com/CoresCode/StunSlam/issues"
 	},
 	"license": "MIT",
 	"icon": "assets/stunslam/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
-		"main": [
-			"com.corescode.stunslam.StunSlam"
-		],
 		"client": [
 			"com.corescode.stunslam.client.StunSlamClient"
 		],
@@ -25,17 +23,13 @@
 			"com.corescode.stunslam.client.StunSlamModMenu"
 		]
 	},
-	"mixins": [
-		"stunslam.mixins.json",
-		{
-			"config": "stunslam.client.mixins.json",
-			"environment": "client"
-		}
-	],
 	"depends": {
 		"fabricloader": ">=0.19.2",
-		"minecraft": "~1.21.11",
-		"java": ">=21",
+		"minecraft": "${minecraft_dependency}",
+		"java": ">=${java_version}",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }

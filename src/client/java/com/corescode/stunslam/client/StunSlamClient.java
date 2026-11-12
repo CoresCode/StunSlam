@@ -3,11 +3,11 @@ package com.corescode.stunslam.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Items;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Items;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionResult;
 
 public class StunSlamClient implements ClientModInitializer {
 
@@ -32,11 +32,11 @@ public class StunSlamClient implements ClientModInitializer {
 
 		AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 
-			if (!world.isClient()) {
-				return ActionResult.PASS;
+			if (!world.isClientSide()) {
+				return InteractionResult.PASS;
 			}
 
-			if (player.getMainHandStack().isIn(ItemTags.AXES)
+			if (player.getMainHandItem().is(ItemTags.AXES)
 					&& entity instanceof LivingEntity target
 					&& target.isBlocking()) {
 
@@ -49,13 +49,13 @@ public class StunSlamClient implements ClientModInitializer {
 								+ target.getName().getString()
 				);
 
-				return ActionResult.PASS;
+				return InteractionResult.PASS;
 			}
 
-			if (player.getMainHandStack().isOf(Items.MACE)
+			if (player.getMainHandItem().is(Items.MACE)
 					&& entity == shieldStunnedTarget
 					&& stunTicksRemaining > 0
-					&& player.getVelocity().y < 0
+					&& player.getDeltaMovement().y < 0
 					&& player.fallDistance > 0.5f) {
 
 				long elapsedTicks =
@@ -74,10 +74,10 @@ public class StunSlamClient implements ClientModInitializer {
 				shieldStunnedTarget = null;
 				stunTicksRemaining = 0;
 
-				return ActionResult.PASS;
+				return InteractionResult.PASS;
 			}
 
-			return ActionResult.PASS;
+			return InteractionResult.PASS;
 		});
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {

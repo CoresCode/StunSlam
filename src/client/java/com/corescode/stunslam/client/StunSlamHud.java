@@ -1,15 +1,11 @@
 package com.corescode.stunslam.client;
 
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
+import net.minecraft.resources.Identifier;
 
 public class StunSlamHud {
 
     private static final Identifier HUD_ID =
-            Identifier.of("stunslam", "stun_slam");
+            Identifier.fromNamespaceAndPath("stunslam", "stun_slam");
 
     private static final int FRAME_COUNT = 2;
 
@@ -20,11 +16,11 @@ public class StunSlamHud {
     private static long animationStart = -1;
 
     private static final Identifier[] FRAMES = {
-            Identifier.of(
+            Identifier.fromNamespaceAndPath(
                     "stunslam",
                     "textures/hud/stunslam/frame_1.png"
             ),
-            Identifier.of(
+            Identifier.fromNamespaceAndPath(
                     "stunslam",
                     "textures/hud/stunslam/frame_2.png"
             )
@@ -32,19 +28,19 @@ public class StunSlamHud {
 
     public static void initialize() {
 
-        HudElementRegistry.addLast(
+        StunSlamHudBridge.register(
                 HUD_ID,
-                (context, tickCounter) -> render(context)
+                StunSlamHud::render
         );
     }
 
     public static void trigger() {
 
         animationStart =
-                Util.getMeasuringTimeMs();
+                currentTimeMs();
     }
 
-    private static void render(DrawContext context) {
+    private static void render(HudCanvas context) {
 
         if (animationStart < 0) {
             return;
@@ -56,7 +52,7 @@ public class StunSlamHud {
                         .getAnimationDurationMs();
 
         long elapsed =
-                Util.getMeasuringTimeMs()
+                currentTimeMs()
                         - animationStart;
 
         // Two frames total
@@ -85,10 +81,10 @@ public class StunSlamHud {
                         .getAnimationHeight();
 
         int screenWidth =
-                context.getScaledWindowWidth();
+                context.guiWidth();
 
         int screenHeight =
-                context.getScaledWindowHeight();
+                context.guiHeight();
 
         // Get configured position
         int positionX =
@@ -124,16 +120,18 @@ public class StunSlamHud {
                 );
 
         context.drawTexture(
-                RenderPipelines.GUI_TEXTURED,
                 texture,
                 x,
                 y,
-                0.0f,
-                0.0f,
                 drawWidth,
                 drawHeight,
                 TEXTURE_WIDTH,
                 TEXTURE_HEIGHT
         );
+    }
+
+    private static long currentTimeMs() {
+
+        return System.nanoTime() / 1_000_000L;
     }
 }
